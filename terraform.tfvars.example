@@ -1,0 +1,15 @@
+# Example terraform.tfvars file
+# Copy this file to terraform.tfvars and fill in your actual values
+
+# Required variables - these override the defaults in variables.tf
+domain = "your-subdomain.duckdns.org"        # Replace with your DuckDNS domain
+email  = "your-email@example.com"            # Replace with your email for Let's Encrypt
+token  = "your-duckdns-token-here"           # Replace with your DuckDNS token
+
+# Optional variables (uncomment and modify if needed)
+# region = "us-west-2"                       # AWS region (default: us-east-1)
+# ec2_count = 1                              # Number of VPN servers (default: 1)
+# profile = "your-aws-profile"               # AWS profile name (default: xray_profile)
+# instance_type = "t2.micro"                 # EC2 instance type (default: t2.micro)
+# public_key_path = "~/.ssh/custom_key.pub"  # SSH public key path
+# ssh_key_path = "~/.ssh/custom_key"         # SSH private key path
