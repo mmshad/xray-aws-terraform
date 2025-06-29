@@ -13,8 +13,47 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
 - Terraform CLI (1.3.9+) installed
 - AWS CLI installed
 - AWS account with appropriate permissions
-- DuckDNS account and token
+- DuckDNS account and token (see setup instructions below)
 - SSH key pair generated
+
+### AWS Credentials Setup
+1. **Create AWS Access Keys**
+   - Log into your AWS Console
+   - Go to IAM → Users → Your User → Security credentials
+   - Create a new Access Key and note down the Access Key ID and Secret Access Key
+
+2. **Configure AWS Profile**
+   Create or edit `~/.aws/credentials` file with your AWS credentials:
+   ```ini
+   [xray_profile]
+   aws_access_key_id = YOUR_ACCESS_KEY_ID
+   aws_secret_access_key = YOUR_SECRET_ACCESS_KEY
+   ```
+   
+   Alternatively, you can set a different profile name in `terraform.tfvars`:
+   ```bash
+   profile = "your-custom-profile-name"
+   ```
+
+### DuckDNS Setup
+1. **Create DuckDNS Account**
+   - Visit [DuckDNS.org](https://www.duckdns.org)
+   - Sign in with your preferred account (Google, GitHub, etc.)
+
+2. **Create a Subdomain**
+   - On the DuckDNS dashboard, enter your desired subdomain name
+   - Click "add domain" (e.g., if you enter "myserver", you'll get "myserver.duckdns.org")
+   - Note down your full domain name
+
+3. **Get Your Token**
+   - Your DuckDNS token is displayed at the top of the dashboard page
+   - Copy this token - you'll need it for the `terraform.tfvars` file
+
+4. **Test Your Setup (Optional)**
+   You can test your DuckDNS setup by running:
+   ```bash
+   curl "https://www.duckdns.org/update?domains=YOUR_SUBDOMAIN&token=YOUR_TOKEN&ip=1.2.3.4"
+   ```
 
 ## Quick Start
 
@@ -28,9 +67,9 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
 2. **Edit Configuration**
    Edit `terraform.tfvars` with your values:
    ```bash
-   domain = "your-subdomain.duckdns.org"
-   email  = "your-email@example.com"
-   token  = "your-duckdns-token"
+   domain = "your-subdomain.duckdns.org"  # Your DuckDNS domain from setup above
+   email  = "your-email@example.com"      # Email for Let's Encrypt certificates
+   token  = "your-duckdns-token"          # DuckDNS token from your dashboard
    ```
 
 3. **Deploy**
@@ -47,9 +86,9 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
 ## Configuration
 
 ### Required Variables
-- `domain`: Your DuckDNS subdomain (e.g., "myserver.duckdns.org")
-- `email`: Email for Let's Encrypt certificate registration
-- `token`: Your DuckDNS token for DNS updates
+- `domain`: Your DuckDNS subdomain (e.g., "myserver.duckdns.org") - obtained from DuckDNS dashboard
+- `email`: Email for Let's Encrypt certificate registration - used for certificate renewal notifications
+- `token`: Your DuckDNS token for DNS updates - found on your DuckDNS dashboard
 
 ### Optional Variables
 - `region`: AWS region (default: "us-east-1")
