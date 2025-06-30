@@ -74,7 +74,7 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
    ```bash
    cloudflare_api_token = "your-cloudflare-api-token"
    cloudflare_domain = "yourdomain.com"
-   cloudflare_subdomain = "vpn"  # Optional, default is "vpn"
+   cloudflare_subdomain = "app"  # Optional, default is "app"
    ```
 
 ## Quick Start
@@ -97,7 +97,7 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
    # For Cloudflare
    cloudflare_api_token = "your-cloudflare-api-token"
    cloudflare_domain = "yourdomain.com"
-   cloudflare_subdomain = "vpn"  # Optional, default is "vpn"
+   cloudflare_subdomain = "app"  # Optional, default is "app"
    ```
 
 3. **Deploy**
@@ -123,7 +123,7 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
 - `duckdns_token`: Your DuckDNS token for DNS updates - found on your DuckDNS dashboard
 - `cloudflare_api_token`: Your Cloudflare API token for DNS updates
 - `cloudflare_domain`: Your Cloudflare domain name
-- `cloudflare_subdomain`: Subdomain for Cloudflare (default: "vpn")
+- `cloudflare_subdomain`: Subdomain for Cloudflare (default: "app")
 
 ### Optional Variables
 - `region`: AWS region (default: "us-east-1")
