@@ -24,16 +24,6 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# local variables
-locals {
-  user_data = templatefile("${path.module}/install-xray.sh", {
-    DOMAIN   = var.domain
-    EMAIL    = var.email
-    TOKEN    = var.token
-    PROTOCOL = var.protocol
-  })
-}
-
 # Specify cloud provider
 provider "aws" {
   region  = var.region
@@ -116,11 +106,15 @@ resource "aws_instance" "xray_server" {
   vpc_security_group_ids      = [module.security_group.security_group_id]
   associate_public_ip_address = true
 
-  user_data = local.user_data
-
-  tags = {
-    Name = "xry_${timestamp()}"
-  }
+  user_data = templatefile("install-xray.sh", {
+    DUCKDNS_TOKEN       = var.duckdns_token,
+    DUCKDNS_DOMAIN      = var.duckdns_domain,
+    CLOUDFLARE_API_TOKEN = var.cloudflare_api_token,
+    CLOUDFLARE_DOMAIN   = var.cloudflare_domain,
+    CLOUDFLARE_SUBDOMAIN = "${var.base_subdomain}${count.index + 1}",
+    CERTBOT_EMAIL       = var.certbot_email,
+    PROTOCOL            = var.protocol
+  })
 
   provisioner "remote-exec" {
     inline = [
@@ -133,5 +127,9 @@ resource "aws_instance" "xray_server" {
       private_key = file(var.ssh_key_path)
       host        = self.public_ip
     }
+  }
+
+  tags = {
+    Name = "xray_server_${count.index + 1}"
   }
 }

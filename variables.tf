@@ -5,7 +5,7 @@ variable "region" {
 
 variable "ec2_count" {
   type        = number
-  description = "number of EC2 instances for multiple VPN servers"
+  description = "Number of EC2 instances for multiple VPN servers. Each instance will have a unique subdomain (e.g., vpn1, vpn2, ...)."
   default     = 1
 }
 
@@ -14,18 +14,8 @@ variable "profile" {
   default = "xray_profile"
 }
 
-variable "domain" {
-  description = "Your domain name (e.g., your-domain.duckdns.org)"
-  type        = string
-}
-
-variable "email" {
+variable "certbot_email" {
   description = "Your email address for Let's Encrypt certificate"
-  type        = string
-}
-
-variable "token" {
-  description = "Your DuckDNS token"
   type        = string
 }
 
@@ -72,4 +62,40 @@ variable "protocol" {
     condition     = contains(["vmess", "vless"], var.protocol)
     error_message = "Protocol must be either 'vmess' or 'vless'."
   }
+}
+
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token for managing DNS records"
+  type        = string
+  default     = ""
+}
+
+variable "cloudflare_domain" {
+  description = "Custom domain managed via Cloudflare"
+  type        = string
+  default     = ""
+}
+
+variable "cloudflare_subdomain" {
+  description = "Subdomain for the custom domain managed via Cloudflare"
+  type        = string
+  default     = "vpn"
+}
+
+variable "duckdns_domain" {
+  description = "Your DuckDNS domain (e.g., your-subdomain.duckdns.org)"
+  type        = string
+  default     = ""  
+}
+
+variable "duckdns_token" {
+  description = "Your DuckDNS token"
+  type        = string
+  default     = ""  
+}
+
+variable "base_subdomain" {
+  description = "Base subdomain for VPN servers (e.g., 'app' for app1, app2, ...)."
+  type        = string
+  default     = "app"
 }
