@@ -8,6 +8,22 @@ terraform {
   required_version = ">= 1.3.9"
 }
 
+# Get the latest Ubuntu AMI
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 # local variables
 locals {
   user_data = templatefile("${path.module}/install-xray.sh", {
@@ -91,7 +107,7 @@ module "security_group" {
 
 resource "aws_instance" "xray_server" {
   count         = var.ec2_count
-  ami           = var.instance_ami
+  ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   key_name      = aws_key_pair.xray_key_pair.key_name
 

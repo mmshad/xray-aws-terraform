@@ -49,10 +49,6 @@ variable "security_group_name_prefix" {
   default     = "terra_"
 }
 
-variable "instance_ami" {
-  default = "ami-0557a15b87f6559cf"
-}
-
 variable "instance_type" {
   default = "t2.micro"
 }
