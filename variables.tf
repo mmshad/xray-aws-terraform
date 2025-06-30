@@ -62,3 +62,14 @@ variable "ssh_key_path" {
   type    = string
   default = "~/.ssh/id_rsa"
 }
+
+variable "protocol" {
+  description = "X-Ray protocol to use (vmess or vless)"
+  type        = string
+  default     = "vmess"
+
+  validation {
+    condition     = contains(["vmess", "vless"], var.protocol)
+    error_message = "Protocol must be either 'vmess' or 'vless'."
+  }
+}

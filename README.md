@@ -81,7 +81,11 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
    ```
 
 4. **Get Connection Details**
-   After deployment, look for the green `vmess://` link in the output. Copy this link to your V2Ray/X-Ray client.
+   After deployment, look for the green connection link in the output:
+   - For VMESS protocol: `vmess://` link
+   - For VLESS protocol: `vless://` link
+   
+   Copy this link to your V2Ray/X-Ray client.
 
 ## Configuration
 
@@ -95,6 +99,7 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
 - `ec2_count`: Number of VPN servers (default: 1)
 - `instance_type`: EC2 instance type (default: "t2.micro")
   > **Note**: `t2.micro` may not be available in all AWS regions. If you encounter availability issues, consider using `t3.micro` which offers better performance but may come with slightly higher costs. For example, `t2.micro` is not available in `eu-north-1`.
+- `protocol`: X-Ray protocol to use - either "vmess" or "vless" (default: "vmess")
 - `profile`: AWS CLI profile name (default: "xray_profile")
 
 ## Multiple Servers
@@ -102,7 +107,28 @@ To deploy multiple VPN servers, set `ec2_count` in your `terraform.tfvars`:
 ```bash
 ec2_count = 3
 ```
-Each server will have its own `vmess://` connection link in the output.
+Each server will have its own connection link in the output.
+
+## Protocol Selection
+This project supports both VMESS and VLESS protocols:
+
+### VMESS (Default)
+- More widely supported by V2Ray clients
+- Uses legacy protocol with additional encryption layer
+- Recommended for maximum compatibility
+
+### VLESS
+- Newer, more efficient protocol
+- Better performance with lower overhead
+- Requires newer V2Ray/Xray clients
+
+### Switching Protocols
+To use VLESS instead of VMESS, add this line to your `terraform.tfvars`:
+```bash
+protocol = "vless"
+```
+
+The deployment will automatically generate the appropriate connection link (`vmess://` or `vless://`) based on your selection.
 
 ## Security Notes
 - All traffic is encrypted with TLS

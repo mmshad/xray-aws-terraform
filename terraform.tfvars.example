@@ -11,5 +11,6 @@ token  = "your-duckdns-token-here"           # Replace with your DuckDNS token
 # ec2_count = 1                              # Number of VPN servers (default: 1)
 # profile = "your-aws-profile"               # AWS profile name (default: xray_profile)
 # instance_type = "t2.micro"                 # EC2 instance type (default: t2.micro)
+# protocol = "vmess"                         # X-Ray protocol: vmess or vless (default: vmess)
 # public_key_path = "~/.ssh/custom_key.pub"  # SSH public key path
 # ssh_key_path = "~/.ssh/custom_key"         # SSH private key path

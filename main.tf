@@ -27,9 +27,10 @@ data "aws_ami" "ubuntu" {
 # local variables
 locals {
   user_data = templatefile("${path.module}/install-xray.sh", {
-    DOMAIN = var.domain
-    EMAIL  = var.email
-    TOKEN  = var.token
+    DOMAIN   = var.domain
+    EMAIL    = var.email
+    TOKEN    = var.token
+    PROTOCOL = var.protocol
   })
 }
 
@@ -123,7 +124,7 @@ resource "aws_instance" "xray_server" {
 
   provisioner "remote-exec" {
     inline = [
-      "timeout 300s bash -c 'sudo tail -f /var/log/cloud-init-output.log | while read line; do echo $line; echo $line | grep 'vmess://' && break; done'"
+      "timeout 300s bash -c 'sudo tail -f /var/log/cloud-init-output.log | while read -r l; do echo \"$l\"; echo \"$l\" | grep -qE \"v[ml]ess://\" && break; done'"
     ]
 
     connection {

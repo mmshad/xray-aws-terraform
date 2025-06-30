@@ -4,6 +4,7 @@ set -euo pipefail
 DOMAIN="${DOMAIN}"
 EMAIL="${EMAIL}"
 TOKEN="${TOKEN}"
+PROTOCOL="${PROTOCOL}"
 
 # Update DuckDNS and wait for DNS propagation
 INSTANCE_IP=$(curl -s ifconfig.me)
@@ -40,7 +41,41 @@ while PORT=$(shuf -i 20000-60000 -n 1); do ss -tulpn | grep -q ":$PORT " || brea
 UUID=$(uuidgen)
 
 # Write Xray config file
-cat <<EOF | sudo tee /usr/local/etc/xray/config.json >/dev/null
+if [ "$PROTOCOL" = "vless" ]; then
+  # VLESS configuration
+  cat <<EOF | sudo tee /usr/local/etc/xray/config.json >/dev/null
+{
+  "inbounds": [{
+    "port": $PORT,
+    "protocol": "vless",
+    "settings": {
+      "clients": [{
+        "id": "$UUID",
+        "flow": ""
+      }],
+      "decryption": "none"
+    },
+    "streamSettings": {
+      "network": "ws",
+      "security": "tls",
+      "tlsSettings": {
+        "certificates": [{
+          "certificateFile": "$CERT_FILE",
+          "keyFile": "$KEY_FILE"
+        }]
+      },
+      "wsSettings": {
+        "path": "/v2ray",
+        "host": "$DOMAIN"
+      }
+    }
+  }],
+  "outbounds":[{ "protocol":"freedom" }]
+}
+EOF
+else
+  # VMESS configuration (default)
+  cat <<EOF | sudo tee /usr/local/etc/xray/config.json >/dev/null
 {
   "inbounds": [{
     "port": $PORT,
@@ -69,6 +104,7 @@ cat <<EOF | sudo tee /usr/local/etc/xray/config.json >/dev/null
   "outbounds":[{ "protocol":"freedom" }]
 }
 EOF
+fi
 
 # Modify the Xray service file to run as root
 sudo pkill xray
@@ -83,22 +119,27 @@ sudo systemctl status xray --no-pager
 
 sleep 5
 
-# Emit vmess link
-VMESS_JSON=$(printf '{
-  "v":"2",
-  "ps":"Xray TLS WS",
-  "add":"%s",
-  "port":"%s",
-  "id":"%s",
-  "aid":"0",
-  "net":"ws",
-  "type":"none",
-  "host":"%s",
-  "path":"/v2ray",
-  "tls":"tls"
-}'  "$DOMAIN" "$PORT" "$UUID" "$DOMAIN")
+# Generate connection link based on protocol
+if [ "$PROTOCOL" = "vless" ]; then
+  # Emit vless link
+  VLESS_LINK="vless://$UUID@$DOMAIN:$PORT?type=ws&security=tls&path=/v2ray&host=$DOMAIN#Xray-TLS-WS"
+  echo -e "\033[0;32m$VLESS_LINK\033[0m" | sudo tee -a /var/log/cloud-init-output.log
+else
+  # Emit vmess link (default)
+  VMESS_JSON=$(printf '{
+    "v":"2",
+    "ps":"Xray TLS WS",
+    "add":"%s",
+    "port":"%s",
+    "id":"%s",
+    "aid":"0",
+    "net":"ws",
+    "type":"none",
+    "host":"%s",
+    "path":"/v2ray",
+    "tls":"tls"
+  }'  "$DOMAIN" "$PORT" "$UUID" "$DOMAIN")
 
-VMESS_LINK="vmess://$(echo -n "$VMESS_JSON" | base64 -w0)"
-
-# Emit vmess link with color (for user visibility)
-echo -e "\033[0;32m$VMESS_LINK\033[0m" | sudo tee -a /var/log/cloud-init-output.log
+  VMESS_LINK="vmess://$(echo -n "$VMESS_JSON" | base64 -w0)"
+  echo -e "\033[0;32m$VMESS_LINK\033[0m" | sudo tee -a /var/log/cloud-init-output.log
+fi
