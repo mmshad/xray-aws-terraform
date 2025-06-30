@@ -94,6 +94,7 @@ Terraform script to deploy X-Ray VPN server on AWS with automatic TLS certificat
 - `region`: AWS region (default: "us-east-1")
 - `ec2_count`: Number of VPN servers (default: 1)
 - `instance_type`: EC2 instance type (default: "t2.micro")
+  > **Note**: t2.micro may not be available in all AWS regions. If you encounter availability issues, consider using t3.micro which offers better performance but may come with slightly higher costs.
 - `profile`: AWS CLI profile name (default: "xray_profile")
 
 ## Multiple Servers
