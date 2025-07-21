@@ -1,0 +1,28 @@
+# Example terraform.tfvars file
+# Copy this file to terraform.tfvars and fill in your actual values
+
+# Required variables - these override the defaults in variables.tf
+
+# Uncomment the following section for DuckDNS configuration
+# duckdns_token = "your-duckdns-token"                   # Replace with your DuckDNS token
+# duckdns_domain = "your-duckdns-domain"                 # Replace with your DuckDNS domain
+
+# Uncomment the following section for Cloudflare configuration
+# cloudflare_api_token = "your-cloudflare-api-token"     # Replace with your API token for Cloudflare
+# cloudflare_domain = "your-cloudflare-domain"           # Replace with your custom domain managed via Cloudflare
+# cloudflare_subdomain = "your-cloudflare-subdomain"     # Replace with subdomain for the custom domain (default: vpn)
+
+# General settings
+certbot_email = "your-email@example.com"                 # Replace with your email for Let's Encrypt
+
+# Optional variables (uncomment and modify if needed)
+# region = "us-east-1"                                   # AWS region (default: us-east-1)
+# ec2_count = 1                                          # Number of VPN servers (default: 1)
+# profile = "your-aws-profile"                           # AWS profile name (default: xray_profile)
+# instance_type = "t2.micro"                             # EC2 instance type (default: t2.micro)
+# protocol = "vmess"                                     # X-Ray protocol: vmess or vless (default: vmess)
+# public_key_path = "~/.ssh/custom_key.pub"              # SSH public key path
+# ssh_key_path = "~/.ssh/custom_key"                     # SSH private key path
+
+# Example for base subdomain
+base_subdomain = "app"                                   # Base subdomain for VPN servers (e.g., app1, app2, ...).
